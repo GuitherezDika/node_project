@@ -3,7 +3,7 @@ import { getPosts, createPost, updatePost, deletePost, likePost } from '../contr
 
 const router = express.Router();
 
-router.get('/', getPosts);
+router.get('/', getPosts);// router + controller
 router.post('/', createPost);
 router.patch('/:id', updatePost); // ":id" = parameter
 router.delete('/:id', deletePost);
