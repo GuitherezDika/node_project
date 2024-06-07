@@ -10,5 +10,7 @@ router.post('/', auth, createPost);
 router.patch('/:id', auth, updatePost); // ":id" = parameter
 router.delete('/:id', auth, deletePost);
 router.patch('/:id/likePost', auth, likePost);
-
+// jika auth di defenisikan sebelum controller --> 
+// middleware bisa langsung di populasiin pada controller didalam REQUEST
+// misal "userId"
 export default router;
