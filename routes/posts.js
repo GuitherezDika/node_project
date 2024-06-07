@@ -1,12 +1,14 @@
 import express from 'express';
 import { getPosts, createPost, updatePost, deletePost, likePost } from '../controllers/posts.js';
-
+import auth from '../middleware/auth.js'
 const router = express.Router();
 
 router.get('/', getPosts);// router + controller
-router.post('/', createPost);
-router.patch('/:id', updatePost); // ":id" = parameter
-router.delete('/:id', deletePost);
-router.patch('/:id/likePost', likePost);
+router.post('/', auth, createPost);
+// web -> user bisa liat semua data post, tapi kalau belum login tidak bisa edit/ create / delete / like post transaksi
+// auth dipasang dengan createPost
+router.patch('/:id', auth, updatePost); // ":id" = parameter
+router.delete('/:id', auth, deletePost);
+router.patch('/:id/likePost', auth, likePost);
 
 export default router;
