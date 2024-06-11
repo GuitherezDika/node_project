@@ -6,10 +6,9 @@ import User from '../models/user.js';
 export const signin = async (req, res) => {
     const {email, password} = req.body;
     try {
-        const existingUser = User.findOne({email});
+        const existingUser = await User.findOne({ email });
         if(!existingUser) return res.status(404).json({message: "User doesn't exist"})
         const isPasswordExist = await bycrypt.compare(password, existingUser.password);
-        console.log(isPasswordExist);
         if(!isPasswordExist) return res.status(400).json({message: "Invalid credential."});
 
         const token = jwt.sign({ email: existingUser.email, id: existingUser._id}, 'test', {expiresIn: "1h"});
