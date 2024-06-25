@@ -1,10 +1,26 @@
 import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js"
 
-export const getPosts = async (req, res) => {
+export const getPost = async (req, res) => {
+    const { id } = req.params;
     try {
-        const postMessages = await PostMessage.find(); // find function takes time => await
-        res.status(200).json(postMessages)
+        const post = await PostMessage.findById(id);
+        res.status(200).json(post)
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+}
+
+export const getPosts = async (req, res) => {
+    const { page } = req.query; // all data from query is STRING 
+    try {
+        const LIMIT = 8; // maximum data per page;
+        const startIndex = (Number(page) - 1) * LIMIT;
+        const total = await PostMessage.countDocuments({});
+        const posts = await PostMessage.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex)
+
+        // const postMessages = await PostMessage.find(); // find function takes time => await
+        res.status(200).json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT) })
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -77,6 +93,19 @@ export const likePost = async (req, res) => {
     }
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
     // const updatedPost = await PostMessage.findByIdAndUpdate(id, {likeCount: post.likeCount + 1}, {new: true});
+
+    res.json(updatedPost)
+}
+
+export const commentPost = async (req, res) => {
+    const { id } = req.params;
+    const { value } = req.body;
+
+    const post = await PostMessage.findById(id);
+
+    post.comments.push(value) // -> tambahkan pada mongodb postSchema
+
+    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true })
 
     res.json(updatedPost)
 }
